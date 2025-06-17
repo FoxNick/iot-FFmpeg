@@ -2509,7 +2509,22 @@ static int read_packet(AVFormatContext *s, uint8_t *buf, int raw_packet_size,
             else
                 continue;
         } else {
-            break;
+           ///// ///// ///// 添加的部分 ///// ///// /////
+           if((*data)[0] == 0x47 && (*data)[188] != 0x47) {
+               for(int i = 0; i < TS_PACKET_SIZE; i++) {
+                   if((*data)[i] == 0x47 && (*data)[i+188] == 0x47) {
+                       avio_seek(pb, i, SEEK_CUR);
+                       avio_seek(pb, -TS_PACKET_SIZE, SEEK_CUR);
+                       reanalyze(s->priv_data);
+                       len = ffio_read_indirect(pb, buf, TS_PACKET_SIZE, data);
+                       if (len != TS_PACKET_SIZE)
+                              return len < 0 ? len : AVERROR_EOF;
+                       return 0;
+                  }
+              }
+           } else {
+               break;
+           }
         }
     }
     return 0;

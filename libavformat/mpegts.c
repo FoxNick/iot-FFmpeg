@@ -2497,14 +2497,13 @@ static int read_packet(AVFormatContext *s, uint8_t *buf, int raw_packet_size,
     int len;
     len = ffio_read_indirect(pb, buf, TS_PACKET_SIZE, data);
     if (len != TS_PACKET_SIZE)
-        return len < 0 ? len : AVERROR_EOF
+        return len < 0 ? len : AVERROR_EOF;
     
     if((*data)[0] == 0) {
         if (mpegts_resync(s, raw_packet_size, *data) < 0)
             return AVERROR(EAGAIN);
         return 0;
     }
-​
     for (;;) {
         len = ffio_read_indirect(pb, buf, TS_PACKET_SIZE, data);
         if (len != TS_PACKET_SIZE)
@@ -2529,8 +2528,8 @@ static int read_packet(AVFormatContext *s, uint8_t *buf, int raw_packet_size,
                        if (len != TS_PACKET_SIZE)
                               return len < 0 ? len : AVERROR_EOF;
                        return 0;
-                  }
-              }
+                   }
+               }
            } else {
                break;
            }
